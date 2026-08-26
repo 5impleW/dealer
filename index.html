@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HMP Dealer Program — local preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<!-- stand-in for Horizon base.css, which the storefront loads before section CSS -->
+<style id="dlrHorizonBaseStandIn">img{width:100%;height:auto}</style>
+<style id="dlrPageCss">/* ============================================================
+   HMP Dealer Program — page styles
+   Scope: .hmp-dlr  /  prefix: dlr-
+   Design tokens mirrored from flash-landing-1..4.css so this page reads as the
+   same brand as the FLASH / Lightning MK.II landing pages.
+
+   ALL styles for this page live in this one file. Sections must NOT carry
+   inline <style> overrides — repeated <link> of this asset across sections
+   would win over them (see 部署教程 "重复 link 会盖内联 style").
+
+   The page is entirely light and monochrome; no rule is heavier than 1px.
+   The .dlr-on-dark / .dlr-on-light machinery from v2–v3 is gone with the dark
+   bands it served. If a dark section is ever reintroduced, bring that machinery
+   back with it — verify.py's full-page contrast audit will fail loudly if not.
+   ============================================================ */
+
+.hmp-dlr{
+  --ink:#111417;--body:#3f4650;--max:1180px;
+  /* two hairline weights, both 1px — nothing on this page draws a rule heavier
+     than 1px. --line separates content, --line-soft edges a surface. */
+  --line:#e2e6ea;--line-soft:#eaedf0;
+  --mist:#f7f8f9;--panel:#eef1f3;
+  /* --muted darkened from the flash pages' #737b87 (4.28:1 on white, 3.95:1 on
+     --mist — both under WCAG AA). #667080 = 5.00:1 / 4.57:1. Scoped here, so
+     the FLASH pages are untouched. */
+  --muted:#667080;--hint:#6e7684;
+  /* v5: monochrome. Buttons, rules and links are all ink — the brand green
+     read as decoration rather than hierarchy once the page went light. */
+  --ink-hover:#2b3138;
+  --header-h:72px;
+
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  color:var(--ink);background:#fff;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;                    /* clip, not hidden: never a scroll container */
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 18px);
+}
+.hmp-dlr *{box-sizing:border-box;margin:0;padding:0}
+.hmp-dlr [hidden]{display:none!important}
+.hmp-dlr section[id]{scroll-margin-top:calc(var(--header-h) + 18px)}
+.hmp-dlr img{max-width:100%;height:auto;display:block}
+.hmp-dlr h1,.hmp-dlr h2,.hmp-dlr h3,.hmp-dlr h4{
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:800}
+
+@media(prefers-reduced-motion:reduce){
+  .hmp-dlr,.hmp-dlr *{scroll-behavior:auto!important;transition:none!important}
+}
+
+/* ---------- layout ---------- */
+.hmp-dlr .dlr-wrap{max-width:var(--max);margin:auto;padding:0 24px}
+.hmp-dlr .dlr-section{padding:104px 0}
+.hmp-dlr .dlr-alt{background:var(--mist)}
+@media(max-width:650px){
+  .hmp-dlr .dlr-wrap{padding:0 18px}
+  .hmp-dlr .dlr-section{padding:68px 0}
+}
+
+/* ---------- type ---------- */
+.hmp-dlr h1{font-size:clamp(2.9rem,6vw,5rem);line-height:.98;letter-spacing:-.025em}
+.hmp-dlr h2{font-size:clamp(2.1rem,4.3vw,3.4rem);line-height:1.03;letter-spacing:-.015em}
+.hmp-dlr .dlr-eyebrow{display:block;font-size:.74rem;font-weight:800;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.hmp-dlr .dlr-lede{font-size:1.12rem;color:var(--body);max-width:620px;margin-top:20px}
+.hmp-dlr .dlr-note{font-size:.82rem;color:var(--muted);line-height:1.65;margin-top:34px;max-width:760px}
+.hmp-dlr .dlr-head{max-width:680px;margin-bottom:52px}
+.hmp-dlr .dlr-head .dlr-lede{margin-top:16px}
+
+/* ---------- buttons ---------- */
+.hmp-dlr .dlr-btn{display:inline-flex;align-items:center;justify-content:center;
+  min-height:54px;padding:0 30px;border-radius:4px;font-weight:750;font-size:1rem;
+  border:1px solid var(--ink);text-decoration:none;cursor:pointer;transition:.18s ease;
+  font-family:inherit}
+.hmp-dlr .dlr-btn-primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.hmp-dlr .dlr-btn-primary:hover{background:var(--ink-hover);border-color:var(--ink-hover)}
+/* secondary keeps a hairline, not a 1px black outline — a hard black rule around
+   a ghost button is the same heaviness problem as a 2px divider. */
+.hmp-dlr .dlr-btn-line{background:transparent;color:var(--ink);border-color:var(--line)}
+.hmp-dlr .dlr-btn-line:hover{border-color:var(--ink)}
+.hmp-dlr .dlr-btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.hmp-dlr .dlr-cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+@media(max-width:650px){.hmp-dlr .dlr-cta-row .dlr-btn{width:100%}}
+
+/* ============================================================
+   01 HERO — copy block, then the photograph beneath it
+
+   Text and picture are separate, not overlaid. Two overlay attempts were tried
+   and rejected: v13 set the copy into the frame, v14 took that full-bleed. Both
+   put type on top of a busy showroom shot, and both meant the picture existed to
+   hold text rather than to be looked at.
+
+   Separating them also removes the whole scrim apparatus — no gradient to keep
+   opaque, no geometry assertion standing in for a contrast reading the sandbox
+   cannot take, and the frame goes back to the source's own 3:2 so the wall logo
+   and both bikes stay whole. verify.py asserts frame ratio == source ratio.
+   ============================================================ */
+.hmp-dlr .dlr-hero{background:#fff;padding:96px 0 104px}
+.hmp-dlr .dlr-hero-copy{max-width:760px}
+.hmp-dlr .dlr-hero-shot{margin-top:60px;aspect-ratio:3/2;border-radius:12px;
+  overflow:hidden;background:var(--panel)}
+.hmp-dlr .dlr-hero-shot img{width:100%;height:100%;object-fit:cover}
+@media(max-width:920px){
+  .hmp-dlr .dlr-hero{padding:64px 0 72px}
+  .hmp-dlr .dlr-hero-shot{margin-top:42px}
+}
+
+/* ============================================================
+   02 WHY — six one-line points
+   ============================================================ */
+.hmp-dlr .dlr-why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px 44px}
+.hmp-dlr .dlr-why-card{padding-top:24px;border-top:1px solid var(--line)}
+.hmp-dlr .dlr-why-card h3{font-size:1.32rem;line-height:1.15}
+.hmp-dlr .dlr-why-card p{margin-top:10px;font-size:.95rem;color:var(--body)}
+@media(max-width:920px){.hmp-dlr .dlr-why-grid{grid-template-columns:1fr 1fr;gap:38px 36px}}
+@media(max-width:650px){.hmp-dlr .dlr-why-grid{grid-template-columns:1fr;gap:30px}}
+
+/* ============================================================
+   03 LINEUP — four minimal cards
+   ============================================================ */
+.hmp-dlr .dlr-line-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.hmp-dlr .dlr-model{background:#fff;border-radius:10px;overflow:hidden;
+  display:flex;flex-direction:column;border:1px solid var(--line-soft)}
+.hmp-dlr .dlr-model-media{aspect-ratio:4/3;display:grid;place-items:center;background:var(--mist)}
+.hmp-dlr .dlr-model-media img{width:100%;height:100%;object-fit:contain;padding:12px}
+.hmp-dlr .dlr-model-body{padding:20px 22px 24px;display:flex;flex-direction:column;flex:1}
+.hmp-dlr .dlr-model-body h4{font-size:1.45rem;line-height:1.1}
+.hmp-dlr .dlr-model-line{margin-top:9px;font-size:.9rem;color:var(--body);flex:1}
+.hmp-dlr .dlr-model-msrp{margin-top:16px;padding-top:13px;border-top:1px solid var(--line-soft);
+  font-size:.92rem;font-weight:800}
+@media(max-width:980px){.hmp-dlr .dlr-line-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){
+  .hmp-dlr .dlr-line-grid{gap:12px}
+  .hmp-dlr .dlr-model-media img{padding:8px}
+  .hmp-dlr .dlr-model-body{padding:14px 14px 16px}
+  .hmp-dlr .dlr-model-body h4{font-size:1.14rem}
+  .hmp-dlr .dlr-model-line{margin-top:7px;font-size:.82rem}
+  .hmp-dlr .dlr-model-msrp{margin-top:12px;padding-top:10px;font-size:.84rem}
+}
+
+/* ============================================================
+   04 APPLY — tinted band, grey form panel
+   ============================================================ */
+.hmp-dlr .dlr-apply-grid{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
+  gap:56px;align-items:start}
+.hmp-dlr .dlr-apply-contact{margin-top:24px;font-size:.9rem;color:var(--body);max-width:460px}
+.hmp-dlr .dlr-apply-contact a{color:var(--ink);font-weight:750;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.hmp-dlr .dlr-apply-contact a:hover{text-decoration-color:var(--muted)}
+/* second photograph on the page. The left column runs out of copy long before
+   the form runs out of fields, so this fills real dead space rather than being
+   decoration. Same cover treatment as the hero — sources vary in ratio. */
+.hmp-dlr .dlr-apply-shot{margin-top:38px;aspect-ratio:3/2;border-radius:10px;
+  overflow:hidden;background:var(--panel)}
+.hmp-dlr .dlr-apply-shot img{width:100%;height:100%;object-fit:cover}
+@media(max-width:920px){.hmp-dlr .dlr-apply-shot{margin-top:30px}}
+@media(max-width:920px){.hmp-dlr .dlr-apply-grid{grid-template-columns:1fr;gap:36px}}
+
+/* The form panel is grey, the inputs inside it stay white.
+   Shopify Forms renders its fields inside a shadow root we cannot reach with CSS —
+   an input's own fill comes from the store-wide Theme settings > Colors > Form
+   fields, and changing it there would repaint every form on hmpbikes.com. So the
+   contrast has to come from the surface behind the fields, which is this panel.
+   White-on-white (v6) made the fields disappear; white-on-grey makes them read. */
+.hmp-dlr .dlr-form-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:30px;color:var(--ink)}
+.hmp-dlr .dlr-form-card:empty{display:none}
+@media(max-width:520px){.hmp-dlr .dlr-form-card{padding:22px 18px}}
+
+/* ---- the native /contact form ------------------------------------------------
+   These styles are ours outright now. The Shopify Forms app block rendered its
+   fields inside a shadow root we could not reach, which is why v12 could only
+   tint the panel behind them; posting to /contact puts the inputs back in our
+   own DOM, so the field surface, focus ring and required states are all
+   controllable here. White inputs on the grey panel is what makes the fields
+   read as fields. */
+.hmp-dlr .dlr-field{margin-bottom:14px}
+.hmp-dlr .dlr-field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hmp-dlr .dlr-field label{display:block;font-size:.8rem;font-weight:750;color:var(--ink);
+  margin-bottom:6px}
+.hmp-dlr .dlr-field label span{color:var(--body);font-weight:400}
+.hmp-dlr .dlr-field input,.hmp-dlr .dlr-field select{
+  width:100%;min-height:46px;border:1px solid #d7dce1;border-radius:4px;padding:11px 13px;
+  font:inherit;font-size:.92rem;color:var(--ink);background:#fff;
+  transition:border-color .15s ease,box-shadow .15s ease}
+.hmp-dlr .dlr-field input::placeholder{color:var(--hint);opacity:1}
+.hmp-dlr .dlr-field input:focus,.hmp-dlr .dlr-field select:focus{
+  outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(17,20,23,.12)}
+/* an unchosen "Select one…" must read as a prompt, not as an answer */
+.hmp-dlr .dlr-field select:has(option[value=""]:checked){color:var(--hint)}
+.hmp-dlr .dlr-form-submit{margin-top:6px}
+
+.hmp-dlr .dlr-form-done{display:flex;flex-direction:column;justify-content:center;
+  min-height:527px}
+.hmp-dlr .dlr-form-done h3{font-size:1.5rem}
+.hmp-dlr .dlr-form-done p{margin-top:10px;font-size:.95rem;color:var(--body);max-width:34em}
+@media(max-width:980px) and (min-width:861px){.hmp-dlr .dlr-form-done{min-height:546px}}
+@media(max-width:650px){.hmp-dlr .dlr-form-done{min-height:0;padding:36px 0}}
+.hmp-dlr .dlr-form-error{margin-bottom:16px;padding:13px 15px;border-radius:4px;
+  background:#fff;box-shadow:inset 0 0 0 1px #d7dce1;font-size:.88rem;color:var(--ink)}
+
+/* honeypot: off-screen rather than display:none, which some bots skip */
+.hmp-dlr .dlr-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.hmp-dlr .dlr-hp input{border:0;padding:0;min-height:0;width:1px;height:1px}
+
+@media(max-width:650px){.hmp-dlr .dlr-field-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body style="margin:0;background:#fff">
+<div style="background:#e9edf1;border-bottom:1px solid #d5dbe2;color:#5c6672;
+  font:600 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  letter-spacing:.06em;text-transform:uppercase;padding:0 24px;height:72px;
+  display:flex;align-items:center;justify-content:center;text-align:center">↑ theme header renders here (Horizon, 72px) — not part of this page</div>
+
+<!-- ===== SECTION dealer-01-hero ===== -->
+<div class="hmp-dlr">
+  <section class="dlr-hero" id="dealer-top">
+    <div class="dlr-wrap">
+      <div class="dlr-hero-copy">
+        <span class="dlr-eyebrow">HMP Dealer Program</span>
+        <h1>Now open to US dealers.</h1>
+        <p class="dlr-lede">Class&nbsp;2 electric bikes from $1,599, DOT-certified electric motorcycles up to 75&nbsp;mph &mdash; one account covers the whole ladder. We are building a small network of partners who can sell what they stock <em>and</em> service it.</p>
+        <div class="dlr-cta-row">
+          <a class="dlr-btn dlr-btn-primary" href="#dealer-apply">Apply to become a dealer</a>
+        </div>
+      </div>
+
+      <figure class="dlr-hero-shot">
+        <img src="https://cdn.shopify.com/s/files/1/0600/1629/6074/files/HMP-scooters-daylight-dealership-logo-v5.webp?v=1787722289&width=1800"
+             alt="HMP FLASH and Lightning MK.II electric scooters on a showroom floor beneath the HMP logo"
+             width="1541" height="1021" loading="eager">
+      </figure>
+    </div>
+  </section>
+</div>
+
+<!-- ===== SECTION dealer-02-why ===== -->
+<div class="hmp-dlr">
+  <section class="dlr-section dlr-alt" id="dealer-why">
+    <div class="dlr-wrap">
+      <div class="dlr-head">
+        <h2>Why it earns the floor space.</h2>
+      </div>
+
+      <div class="dlr-why-grid">
+        <div class="dlr-why-card">
+          <h3>A ladder, not one price point</h3>
+          <p>From a $1,599 Class&nbsp;2 e-bike to a $6,499 motorcycle. The customer who balks at the top of the range still leaves on something.</p>
+        </div>
+        <div class="dlr-why-card">
+          <h3>Half the range needs no licence</h3>
+          <p>Class&nbsp;2 sells to anyone who walks in &mdash; no endorsement, no registration, no trip to the DMV.</p>
+        </div>
+        <div class="dlr-why-card">
+          <h3>Little to build on arrival</h3>
+          <p>Depending on the model, units land 80&ndash;100% assembled. Your techs do a pre-delivery check, not a build.</p>
+        </div>
+        <div class="dlr-why-card">
+          <h3>Parts, not lead times</h3>
+          <p>Racks, keys, grips, tires, chargers and complete battery packs ship from California as their own SKUs.</p>
+        </div>
+        <div class="dlr-why-card">
+          <h3>Warranty published in full</h3>
+          <p>12 months / 10,000 miles on motorcycle core components; 3 years / 3,000 miles on the e-bikes. Every exclusion is written down.</p>
+        </div>
+        <div class="dlr-why-card">
+          <h3>Margin that scales</h3>
+          <p>Tiered wholesale pricing across the whole lineup. The full schedule goes out once you are approved.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== SECTION dealer-03-lineup ===== -->
+<div class="hmp-dlr">
+  <section class="dlr-section" id="dealer-lineup">
+    <div class="dlr-wrap">
+      <div class="dlr-head">
+        <h2>The lineup.</h2>
+      </div>
+
+      <div class="dlr-line-grid">
+        <article class="dlr-model">
+          <div class="dlr-model-media">
+            <img src="https://cdn.shopify.com/s/files/1/0600/1629/6074/files/Liva7-black.png?v=1725435634&width=700"
+                 alt="HMP LIVA 7 moped-style Class 2 e-bike in black" width="1200" height="1200" loading="lazy">
+          </div>
+          <div class="dlr-model-body">
+            <h4>LIVA 7</h4>
+            <p class="dlr-model-line">Class 2 e-bike, 50 mi range. No licence, no registration.</p>
+            <p class="dlr-model-msrp">$1,599 MSRP</p>
+          </div>
+        </article>
+
+        <article class="dlr-model">
+          <div class="dlr-model-media">
+            <img src="https://cdn.shopify.com/s/files/1/0600/1629/6074/files/inno-a_pro_28eab032-6bc6-44df-98c3-4ca393333892.png?v=1725434716&width=700"
+                 alt="HMP INNO-A Pro Class 2 e-bike in black" width="1200" height="1200" loading="lazy">
+          </div>
+          <div class="dlr-model-body">
+            <h4>INNO-A Pro</h4>
+            <p class="dlr-model-line">Class 2, 750&nbsp;W, 20&nbsp;mph. The one delivery riders ask for.</p>
+            <p class="dlr-model-msrp">$2,599 MSRP</p>
+          </div>
+        </article>
+
+        <article class="dlr-model">
+          <div class="dlr-model-media">
+            <img src="https://cdn.shopify.com/s/files/1/0600/1629/6074/files/ChatGPT_Image_Jun_22_2026_04_00_22_PM_1.webp?v=1782115574&width=700"
+                 alt="HMP Lightning MK.II electric motorcycle in black" width="1254" height="1254" loading="lazy">
+          </div>
+          <div class="dlr-model-body">
+            <h4>Lightning MK.II</h4>
+            <p class="dlr-model-line">56&nbsp;mph street-legal motorcycle, 62&nbsp;mi range, removable pack.</p>
+            <p class="dlr-model-msrp">$3,999 MSRP</p>
+          </div>
+        </article>
+
+        <article class="dlr-model">
+          <div class="dlr-model-media">
+            <img src="https://cdn.shopify.com/s/files/1/0600/1629/6074/files/Flashgray_03.webp?v=1783806886&width=700"
+                 alt="HMP FLASH electric motorcycle in gray" width="1254" height="1254" loading="lazy">
+          </div>
+          <div class="dlr-model-body">
+            <h4>FLASH</h4>
+            <p class="dlr-model-line">75&nbsp;mph, 106&nbsp;mi range, ABS and CarPlay. Three configurations.</p>
+            <p class="dlr-model-msrp">$4,999 &ndash; $6,499 MSRP</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="dlr-note">Lightning 3000 (30&nbsp;Ah, $2,999) and Lightning 3000 Plus (45&nbsp;Ah, $3,599) are also available to dealers. Prices are US MSRP; dealer pricing is issued after approval. Full spec sheets on request.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ===== SECTION dealer-04-apply ===== -->
+<div class="hmp-dlr">
+  <section class="dlr-section dlr-alt" id="dealer-apply">
+    <div class="dlr-wrap">
+      <div class="dlr-apply-grid">
+
+        <div class="dlr-apply-copy">
+          <h2>Build your lineup.</h2>
+          <p class="dlr-lede">Tell us a bit about your business and we will be in touch.</p>
+          <p class="dlr-apply-contact">
+            We work with businesses that have a physical location and can service what they sell. No fee to apply, and every application is read by a person.
+          </p>
+          <p class="dlr-apply-contact">
+            Questions first? Call <a href="tel:+19169263649">(916)&nbsp;926-3649</a>
+            or email <a href="mailto:business@hmpbikes.com">business@hmpbikes.com</a>
+          </p>
+
+          <figure class="dlr-apply-shot">
+            <img src="https://cdn.shopify.com/s/files/1/0600/1629/6074/files/Codex_2026_8_25_21_20_45.webp?v=1787722290&width=1100"
+                 alt="HMP electric scooters" width="1541" height="1021" loading="lazy">
+          </figure>
+        </div>
+
+        <div class="dlr-form-card">
+          <form id="dealer_application_form" onsubmit="return false">
+
+            
+
+              <div class="dlr-field-row">
+                <div class="dlr-field">
+                  <label for="dlrBusiness">Business name <span aria-hidden="true">*</span></label>
+                  <input id="dlrBusiness" type="text" name="contact[Business name]" required
+                         autocomplete="organization" placeholder="Riverside Powersports">
+                </div>
+                <div class="dlr-field">
+                  <label for="dlrName">Your name <span aria-hidden="true">*</span></label>
+                  <input id="dlrName" type="text" name="contact[Name]" required
+                         autocomplete="name" placeholder="Jordan Lee">
+                </div>
+              </div>
+
+              <div class="dlr-field-row">
+                <div class="dlr-field">
+                  <label for="dlrEmail">Email <span aria-hidden="true">*</span></label>
+                  <input id="dlrEmail" type="email" name="contact[email]" required
+                         autocomplete="email" placeholder="you@yourshop.com">
+                </div>
+                <div class="dlr-field">
+                  <label for="dlrPhone">Phone <span aria-hidden="true">*</span></label>
+                  <input id="dlrPhone" type="tel" name="contact[Phone]" required
+                         autocomplete="tel" placeholder="(555) 123-4567">
+                </div>
+              </div>
+
+              <div class="dlr-field">
+                <label for="dlrCity">City and state <span aria-hidden="true">*</span></label>
+                <input id="dlrCity" type="text" name="contact[City and state]" required
+                       placeholder="Austin, TX">
+              </div>
+
+              <div class="dlr-field">
+                <label for="dlrType">Business type <span aria-hidden="true">*</span></label>
+                <select id="dlrType" name="contact[Business type]" required>
+                  <option value="">Select one&hellip;</option>
+                  <option>Motorcycle or powersports dealer</option>
+                  <option>Scooter or moped dealer</option>
+                  <option>Bicycle or e-bike shop</option>
+                  <option>Repair shop</option>
+                  <option>Rental or fleet operator</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="dlr-field">
+                <label for="dlrService">In-house service department? <span aria-hidden="true">*</span></label>
+                <select id="dlrService" name="contact[Service department]" required>
+                  <option value="">Select one&hellip;</option>
+                  <option>Yes</option>
+                  <option>Through a partner shop</option>
+                  <option>Not yet</option>
+                </select>
+              </div>
+
+              <div class="dlr-hp" aria-hidden="true">
+                <label for="dlrRef">Leave this field empty</label>
+                <input id="dlrRef" type="text" name="contact[Referral code]" tabindex="-1" autocomplete="off">
+              </div>
+
+              <button type="submit" class="dlr-btn dlr-btn-primary dlr-form-submit">Submit application</button>
+
+            
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== SECTION dealer-05-who ===== -->
+<div class="hmp-dlr">
+  <section class="dlr-section dlr-who" id="dealer-who">
+    <div class="dlr-wrap">
+      <span class="dlr-eyebrow">Who we are</span>
+      <div class="dlr-who-grid">
+        <p>Founded in <strong>2022</strong>, HMP Bikes builds electric motorcycles, mopeds and e-bikes. Our Wholesale Department was established in <strong>2024</strong> and ships from our San Francisco warehouse.</p>
+        <p>We are opening dealer conversations across the US &mdash; starting in California &mdash; for qualified scooter, motorcycle, powersports and electric-mobility retailers with <strong>sales and service capability</strong>. Two showrooms: Davis and San Francisco.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div style="background:#e9edf1;border-bottom:1px solid #d5dbe2;color:#5c6672;
+  font:600 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  letter-spacing:.06em;text-transform:uppercase;padding:0 24px;height:72px;
+  display:flex;align-items:center;justify-content:center;text-align:center">↓ theme footer renders here — not part of this page</div>
+<!-- storefront re-links the same CSS from every section; reproduce that ordering locally -->
+<style id="dlrPageCssRepeat">/* ============================================================
+   HMP Dealer Program — page styles
+   Scope: .hmp-dlr  /  prefix: dlr-
+   Design tokens mirrored from flash-landing-1..4.css so this page reads as the
+   same brand as the FLASH / Lightning MK.II landing pages.
+
+   ALL styles for this page live in this one file. Sections must NOT carry
+   inline <style> overrides — repeated <link> of this asset across sections
+   would win over them (see 部署教程 "重复 link 会盖内联 style").
+
+   The page is entirely light and monochrome; no rule is heavier than 1px.
+   The .dlr-on-dark / .dlr-on-light machinery from v2–v3 is gone with the dark
+   bands it served. If a dark section is ever reintroduced, bring that machinery
+   back with it — verify.py's full-page contrast audit will fail loudly if not.
+   ============================================================ */
+
+.hmp-dlr{
+  --ink:#111417;--body:#3f4650;--max:1180px;
+  /* two hairline weights, both 1px — nothing on this page draws a rule heavier
+     than 1px. --line separates content, --line-soft edges a surface. */
+  --line:#e2e6ea;--line-soft:#eaedf0;
+  --mist:#f7f8f9;--panel:#eef1f3;
+  /* --muted darkened from the flash pages' #737b87 (4.28:1 on white, 3.95:1 on
+     --mist — both under WCAG AA). #667080 = 5.00:1 / 4.57:1. Scoped here, so
+     the FLASH pages are untouched. */
+  --muted:#667080;--hint:#6e7684;
+  /* v5: monochrome. Buttons, rules and links are all ink — the brand green
+     read as decoration rather than hierarchy once the page went light. */
+  --ink-hover:#2b3138;
+  --header-h:72px;
+
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  color:var(--ink);background:#fff;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;                    /* clip, not hidden: never a scroll container */
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--header-h) + 18px);
+}
+.hmp-dlr *{box-sizing:border-box;margin:0;padding:0}
+.hmp-dlr [hidden]{display:none!important}
+.hmp-dlr section[id]{scroll-margin-top:calc(var(--header-h) + 18px)}
+.hmp-dlr img{max-width:100%;height:auto;display:block}
+.hmp-dlr h1,.hmp-dlr h2,.hmp-dlr h3,.hmp-dlr h4{
+  font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:800}
+
+@media(prefers-reduced-motion:reduce){
+  .hmp-dlr,.hmp-dlr *{scroll-behavior:auto!important;transition:none!important}
+}
+
+/* ---------- layout ---------- */
+.hmp-dlr .dlr-wrap{max-width:var(--max);margin:auto;padding:0 24px}
+.hmp-dlr .dlr-section{padding:104px 0}
+.hmp-dlr .dlr-alt{background:var(--mist)}
+@media(max-width:650px){
+  .hmp-dlr .dlr-wrap{padding:0 18px}
+  .hmp-dlr .dlr-section{padding:68px 0}
+}
+
+/* ---------- type ---------- */
+.hmp-dlr h1{font-size:clamp(2.9rem,6vw,5rem);line-height:.98;letter-spacing:-.025em}
+.hmp-dlr h2{font-size:clamp(2.1rem,4.3vw,3.4rem);line-height:1.03;letter-spacing:-.015em}
+.hmp-dlr .dlr-eyebrow{display:block;font-size:.74rem;font-weight:800;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.hmp-dlr .dlr-lede{font-size:1.12rem;color:var(--body);max-width:620px;margin-top:20px}
+.hmp-dlr .dlr-note{font-size:.82rem;color:var(--muted);line-height:1.65;margin-top:34px;max-width:760px}
+.hmp-dlr .dlr-head{max-width:680px;margin-bottom:52px}
+.hmp-dlr .dlr-head .dlr-lede{margin-top:16px}
+
+/* ---------- buttons ---------- */
+.hmp-dlr .dlr-btn{display:inline-flex;align-items:center;justify-content:center;
+  min-height:54px;padding:0 30px;border-radius:4px;font-weight:750;font-size:1rem;
+  border:1px solid var(--ink);text-decoration:none;cursor:pointer;transition:.18s ease;
+  font-family:inherit}
+.hmp-dlr .dlr-btn-primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.hmp-dlr .dlr-btn-primary:hover{background:var(--ink-hover);border-color:var(--ink-hover)}
+/* secondary keeps a hairline, not a 1px black outline — a hard black rule around
+   a ghost button is the same heaviness problem as a 2px divider. */
+.hmp-dlr .dlr-btn-line{background:transparent;color:var(--ink);border-color:var(--line)}
+.hmp-dlr .dlr-btn-line:hover{border-color:var(--ink)}
+.hmp-dlr .dlr-btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.hmp-dlr .dlr-cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+@media(max-width:650px){.hmp-dlr .dlr-cta-row .dlr-btn{width:100%}}
+
+/* ============================================================
+   01 HERO — copy block, then the photograph beneath it
+
+   Text and picture are separate, not overlaid. Two overlay attempts were tried
+   and rejected: v13 set the copy into the frame, v14 took that full-bleed. Both
+   put type on top of a busy showroom shot, and both meant the picture existed to
+   hold text rather than to be looked at.
+
+   Separating them also removes the whole scrim apparatus — no gradient to keep
+   opaque, no geometry assertion standing in for a contrast reading the sandbox
+   cannot take, and the frame goes back to the source's own 3:2 so the wall logo
+   and both bikes stay whole. verify.py asserts frame ratio == source ratio.
+   ============================================================ */
+.hmp-dlr .dlr-hero{background:#fff;padding:96px 0 104px}
+.hmp-dlr .dlr-hero-copy{max-width:760px}
+.hmp-dlr .dlr-hero-shot{margin-top:60px;aspect-ratio:3/2;border-radius:12px;
+  overflow:hidden;background:var(--panel)}
+.hmp-dlr .dlr-hero-shot img{width:100%;height:100%;object-fit:cover}
+@media(max-width:920px){
+  .hmp-dlr .dlr-hero{padding:64px 0 72px}
+  .hmp-dlr .dlr-hero-shot{margin-top:42px}
+}
+
+/* ============================================================
+   02 WHY — six one-line points
+   ============================================================ */
+.hmp-dlr .dlr-why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px 44px}
+.hmp-dlr .dlr-why-card{padding-top:24px;border-top:1px solid var(--line)}
+.hmp-dlr .dlr-why-card h3{font-size:1.32rem;line-height:1.15}
+.hmp-dlr .dlr-why-card p{margin-top:10px;font-size:.95rem;color:var(--body)}
+@media(max-width:920px){.hmp-dlr .dlr-why-grid{grid-template-columns:1fr 1fr;gap:38px 36px}}
+@media(max-width:650px){.hmp-dlr .dlr-why-grid{grid-template-columns:1fr;gap:30px}}
+
+/* ============================================================
+   03 LINEUP — four minimal cards
+   ============================================================ */
+.hmp-dlr .dlr-line-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.hmp-dlr .dlr-model{background:#fff;border-radius:10px;overflow:hidden;
+  display:flex;flex-direction:column;border:1px solid var(--line-soft)}
+.hmp-dlr .dlr-model-media{aspect-ratio:4/3;display:grid;place-items:center;background:var(--mist)}
+.hmp-dlr .dlr-model-media img{width:100%;height:100%;object-fit:contain;padding:12px}
+.hmp-dlr .dlr-model-body{padding:20px 22px 24px;display:flex;flex-direction:column;flex:1}
+.hmp-dlr .dlr-model-body h4{font-size:1.45rem;line-height:1.1}
+.hmp-dlr .dlr-model-line{margin-top:9px;font-size:.9rem;color:var(--body);flex:1}
+.hmp-dlr .dlr-model-msrp{margin-top:16px;padding-top:13px;border-top:1px solid var(--line-soft);
+  font-size:.92rem;font-weight:800}
+@media(max-width:980px){.hmp-dlr .dlr-line-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){
+  .hmp-dlr .dlr-line-grid{gap:12px}
+  .hmp-dlr .dlr-model-media img{padding:8px}
+  .hmp-dlr .dlr-model-body{padding:14px 14px 16px}
+  .hmp-dlr .dlr-model-body h4{font-size:1.14rem}
+  .hmp-dlr .dlr-model-line{margin-top:7px;font-size:.82rem}
+  .hmp-dlr .dlr-model-msrp{margin-top:12px;padding-top:10px;font-size:.84rem}
+}
+
+/* ============================================================
+   04 APPLY — tinted band, grey form panel
+   ============================================================ */
+.hmp-dlr .dlr-apply-grid{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
+  gap:56px;align-items:start}
+.hmp-dlr .dlr-apply-contact{margin-top:24px;font-size:.9rem;color:var(--body);max-width:460px}
+.hmp-dlr .dlr-apply-contact a{color:var(--ink);font-weight:750;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.hmp-dlr .dlr-apply-contact a:hover{text-decoration-color:var(--muted)}
+/* second photograph on the page. The left column runs out of copy long before
+   the form runs out of fields, so this fills real dead space rather than being
+   decoration. Same cover treatment as the hero — sources vary in ratio. */
+.hmp-dlr .dlr-apply-shot{margin-top:38px;aspect-ratio:3/2;border-radius:10px;
+  overflow:hidden;background:var(--panel)}
+.hmp-dlr .dlr-apply-shot img{width:100%;height:100%;object-fit:cover}
+@media(max-width:920px){.hmp-dlr .dlr-apply-shot{margin-top:30px}}
+@media(max-width:920px){.hmp-dlr .dlr-apply-grid{grid-template-columns:1fr;gap:36px}}
+
+/* The form panel is grey, the inputs inside it stay white.
+   Shopify Forms renders its fields inside a shadow root we cannot reach with CSS —
+   an input's own fill comes from the store-wide Theme settings > Colors > Form
+   fields, and changing it there would repaint every form on hmpbikes.com. So the
+   contrast has to come from the surface behind the fields, which is this panel.
+   White-on-white (v6) made the fields disappear; white-on-grey makes them read. */
+.hmp-dlr .dlr-form-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:30px;color:var(--ink)}
+.hmp-dlr .dlr-form-card:empty{display:none}
+@media(max-width:520px){.hmp-dlr .dlr-form-card{padding:22px 18px}}
+
+/* ---- the native /contact form ------------------------------------------------
+   These styles are ours outright now. The Shopify Forms app block rendered its
+   fields inside a shadow root we could not reach, which is why v12 could only
+   tint the panel behind them; posting to /contact puts the inputs back in our
+   own DOM, so the field surface, focus ring and required states are all
+   controllable here. White inputs on the grey panel is what makes the fields
+   read as fields. */
+.hmp-dlr .dlr-field{margin-bottom:14px}
+.hmp-dlr .dlr-field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hmp-dlr .dlr-field label{display:block;font-size:.8rem;font-weight:750;color:var(--ink);
+  margin-bottom:6px}
+.hmp-dlr .dlr-field label span{color:var(--body);font-weight:400}
+.hmp-dlr .dlr-field input,.hmp-dlr .dlr-field select{
+  width:100%;min-height:46px;border:1px solid #d7dce1;border-radius:4px;padding:11px 13px;
+  font:inherit;font-size:.92rem;color:var(--ink);background:#fff;
+  transition:border-color .15s ease,box-shadow .15s ease}
+.hmp-dlr .dlr-field input::placeholder{color:var(--hint);opacity:1}
+.hmp-dlr .dlr-field input:focus,.hmp-dlr .dlr-field select:focus{
+  outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(17,20,23,.12)}
+/* an unchosen "Select one…" must read as a prompt, not as an answer */
+.hmp-dlr .dlr-field select:has(option[value=""]:checked){color:var(--hint)}
+.hmp-dlr .dlr-form-submit{margin-top:6px}
+
+.hmp-dlr .dlr-form-done{display:flex;flex-direction:column;justify-content:center;
+  min-height:527px}
+.hmp-dlr .dlr-form-done h3{font-size:1.5rem}
+.hmp-dlr .dlr-form-done p{margin-top:10px;font-size:.95rem;color:var(--body);max-width:34em}
+@media(max-width:980px) and (min-width:861px){.hmp-dlr .dlr-form-done{min-height:546px}}
+@media(max-width:650px){.hmp-dlr .dlr-form-done{min-height:0;padding:36px 0}}
+.hmp-dlr .dlr-form-error{margin-bottom:16px;padding:13px 15px;border-radius:4px;
+  background:#fff;box-shadow:inset 0 0 0 1px #d7dce1;font-size:.88rem;color:var(--ink)}
+
+/* honeypot: off-screen rather than display:none, which some bots skip */
+.hmp-dlr .dlr-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.hmp-dlr .dlr-hp input{border:0;padding:0;min-height:0;width:1px;height:1px}
+
+@media(max-width:650px){.hmp-dlr .dlr-field-row{grid-template-columns:1fr}}
+</style>
+</body>
+</html>
