@@ -214,6 +214,53 @@
 .hmp-dlr .dlr-hp input{border:0;padding:0;min-height:0;width:1px;height:1px}
 
 @media(max-width:650px){.hmp-dlr .dlr-field-row{grid-template-columns:1fr}}
+
+/* ============================================================
+   DEALER LOCATOR (/pages/dealer-locator)
+   Shares every token with the application page — same greys, same 1px rules,
+   same monochrome. The map is the only thing on either page that is allowed
+   colour, and that colour belongs to OpenStreetMap's tiles, not to us.
+   ============================================================ */
+.hmp-dlr .dlr-loc-controls{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;
+  gap:14px;align-items:end;margin-bottom:18px}
+.hmp-dlr .dlr-loc-controls .dlr-field{margin-bottom:0}
+.hmp-dlr .dlr-loc-near{min-height:46px;padding:0 20px;font-size:.92rem;white-space:nowrap}
+.hmp-dlr .dlr-loc-status{min-height:1.4em;margin-bottom:18px;font-size:.86rem;color:var(--body)}
+
+/* One column by default. The second column only exists once the map is actually
+   live — otherwise a blocked CDN leaves a conspicuous empty half, which reads as
+   broken rather than as a page that degraded on purpose. */
+.hmp-dlr .dlr-loc-grid{display:grid;grid-template-columns:1fr;gap:22px;align-items:start}
+.hmp-dlr .dlr-loc-grid.is-mapped{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+.hmp-dlr .dlr-loc-map{display:none;height:560px;border-radius:10px;overflow:hidden;
+  border:1px solid var(--line-soft);background:var(--panel);order:2}
+.hmp-dlr .dlr-loc-map.is-live{display:block}
+.hmp-dlr .dlr-loc-map .leaflet-container{height:100%;font:inherit}
+
+.hmp-dlr .dlr-loc-list{list-style:none;max-height:560px;overflow-y:auto;order:1;
+  border:1px solid var(--line-soft);border-radius:10px}
+.hmp-dlr .dlr-loc-item{padding:18px 20px;border-bottom:1px solid var(--line-soft)}
+.hmp-dlr .dlr-loc-item:last-child{border-bottom:0}
+.hmp-dlr .dlr-loc-item h3{font-size:1.14rem;line-height:1.2}
+.hmp-dlr .dlr-loc-addr{margin-top:6px;font-size:.88rem;color:var(--body)}
+.hmp-dlr .dlr-loc-lines{margin-top:6px;font-size:.8rem;color:var(--body)}
+.hmp-dlr .dlr-loc-links{margin-top:10px;display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem}
+.hmp-dlr .dlr-loc-links a{color:var(--ink);font-weight:750;text-decoration:underline;
+  text-underline-offset:3px;text-decoration-thickness:1px}
+.hmp-dlr .dlr-loc-dist{margin-top:8px;font-size:.8rem;font-weight:800;color:var(--ink)}
+.hmp-dlr .dlr-loc-empty{padding:22px 20px;border:1px dashed var(--line);border-radius:10px;
+  font-size:.92rem;color:var(--body)}
+
+@media(max-width:920px){
+  .hmp-dlr .dlr-loc-grid.is-mapped{grid-template-columns:1fr}
+  .hmp-dlr .dlr-loc-controls{grid-template-columns:1fr 1fr}
+  .hmp-dlr .dlr-loc-near{grid-column:1/-1;width:100%}
+  /* map above the list on narrow screens: the list can scroll for ever, and a
+     map pushed below it would never be seen. */
+  .hmp-dlr .dlr-loc-map{order:0;height:340px}
+  .hmp-dlr .dlr-loc-list{order:1;max-height:none}
+}
+@media(max-width:560px){.hmp-dlr .dlr-loc-controls{grid-template-columns:1fr}}
 </style>
 </head>
 <body style="margin:0;background:#fff">
@@ -221,6 +268,7 @@
   font:600 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
   letter-spacing:.06em;text-transform:uppercase;padding:0 24px;height:72px;
   display:flex;align-items:center;justify-content:center;text-align:center">↑ theme header renders here (Horizon, 72px) — not part of this page</div>
+
 
 <!-- ===== SECTION dealer-01-hero ===== -->
 <div class="hmp-dlr">
@@ -667,6 +715,53 @@
 .hmp-dlr .dlr-hp input{border:0;padding:0;min-height:0;width:1px;height:1px}
 
 @media(max-width:650px){.hmp-dlr .dlr-field-row{grid-template-columns:1fr}}
+
+/* ============================================================
+   DEALER LOCATOR (/pages/dealer-locator)
+   Shares every token with the application page — same greys, same 1px rules,
+   same monochrome. The map is the only thing on either page that is allowed
+   colour, and that colour belongs to OpenStreetMap's tiles, not to us.
+   ============================================================ */
+.hmp-dlr .dlr-loc-controls{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;
+  gap:14px;align-items:end;margin-bottom:18px}
+.hmp-dlr .dlr-loc-controls .dlr-field{margin-bottom:0}
+.hmp-dlr .dlr-loc-near{min-height:46px;padding:0 20px;font-size:.92rem;white-space:nowrap}
+.hmp-dlr .dlr-loc-status{min-height:1.4em;margin-bottom:18px;font-size:.86rem;color:var(--body)}
+
+/* One column by default. The second column only exists once the map is actually
+   live — otherwise a blocked CDN leaves a conspicuous empty half, which reads as
+   broken rather than as a page that degraded on purpose. */
+.hmp-dlr .dlr-loc-grid{display:grid;grid-template-columns:1fr;gap:22px;align-items:start}
+.hmp-dlr .dlr-loc-grid.is-mapped{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+.hmp-dlr .dlr-loc-map{display:none;height:560px;border-radius:10px;overflow:hidden;
+  border:1px solid var(--line-soft);background:var(--panel);order:2}
+.hmp-dlr .dlr-loc-map.is-live{display:block}
+.hmp-dlr .dlr-loc-map .leaflet-container{height:100%;font:inherit}
+
+.hmp-dlr .dlr-loc-list{list-style:none;max-height:560px;overflow-y:auto;order:1;
+  border:1px solid var(--line-soft);border-radius:10px}
+.hmp-dlr .dlr-loc-item{padding:18px 20px;border-bottom:1px solid var(--line-soft)}
+.hmp-dlr .dlr-loc-item:last-child{border-bottom:0}
+.hmp-dlr .dlr-loc-item h3{font-size:1.14rem;line-height:1.2}
+.hmp-dlr .dlr-loc-addr{margin-top:6px;font-size:.88rem;color:var(--body)}
+.hmp-dlr .dlr-loc-lines{margin-top:6px;font-size:.8rem;color:var(--body)}
+.hmp-dlr .dlr-loc-links{margin-top:10px;display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem}
+.hmp-dlr .dlr-loc-links a{color:var(--ink);font-weight:750;text-decoration:underline;
+  text-underline-offset:3px;text-decoration-thickness:1px}
+.hmp-dlr .dlr-loc-dist{margin-top:8px;font-size:.8rem;font-weight:800;color:var(--ink)}
+.hmp-dlr .dlr-loc-empty{padding:22px 20px;border:1px dashed var(--line);border-radius:10px;
+  font-size:.92rem;color:var(--body)}
+
+@media(max-width:920px){
+  .hmp-dlr .dlr-loc-grid.is-mapped{grid-template-columns:1fr}
+  .hmp-dlr .dlr-loc-controls{grid-template-columns:1fr 1fr}
+  .hmp-dlr .dlr-loc-near{grid-column:1/-1;width:100%}
+  /* map above the list on narrow screens: the list can scroll for ever, and a
+     map pushed below it would never be seen. */
+  .hmp-dlr .dlr-loc-map{order:0;height:340px}
+  .hmp-dlr .dlr-loc-list{order:1;max-height:none}
+}
+@media(max-width:560px){.hmp-dlr .dlr-loc-controls{grid-template-columns:1fr}}
 </style>
 </body>
 </html>
